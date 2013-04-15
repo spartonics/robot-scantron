@@ -62,6 +62,10 @@ class Scantron:
         pass
 
 
+    def moveBy(self, inches):
+        self._y += inches * inch
+
+
     def save(self):
         self._canvas.save()
 
@@ -92,6 +96,12 @@ data = [
 
 
 scantron = Scantron('form.pdf', spacing=0.5)
+scantron.drawText(1*inch, 1*inch, 'Scouting Sheet')
+scantron.moveBy(0.5)
+scantron.drawInteger(1, '1000')
+scantron.drawInteger(1, '100')
+scantron.drawInteger(1, '10')
+scantron.drawInteger(1, '1')
 for field in data:
     if field.fieldType == int:
         scantron.drawInteger(1, field.label)
