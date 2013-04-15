@@ -4,45 +4,60 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-def ty(y):
-    return 11*inch - y
+class Scantron:
+    def __init__(self, filename):
+        self._fontSize = 0.15*inch
 
-def drawBox(c, x, y, label='', length=0.4*inch):
-    offset = (length - fontSize) / 2
-    c.drawCentredString(x + length / 2, ty(y), label)
-    c.rect(x, ty(y + offset), length, length, stroke=1, fill=0)
+        self._canvas = canvas.Canvas(filename, pagesize=letter)
+        self._canvas.setFontSize(self._fontSize)
 
-def drawBoolean(c, x, y, label="UNKNOWN", spacing=0.4):
-    x = x * inch
-    y = y * inch
 
-    yes_x = x + 2*inch
-    yes_y = y
+    def _y(self, y):
+        return 11*inch - y
 
-    no_x = x + (2.0 + spacing) * inch
-    no_y = y
 
-    c.drawString(x, ty(y), label)
+    def drawBox(self, x, y, label='', length=0.4*inch):
+        offset = (length - self._fontSize) / 2
+        self._canvas.drawCentredString(x + length / 2, self._y(y), label)
+        self._canvas.rect(x, self._y(y + offset), length, length, stroke=1, 
+                fill=0)
 
-    drawBox(c, yes_x, yes_y, label='Y')
-    drawBox(c, no_x, no_y, label='N')
 
-def drawInteger(c, x, y, label="UNKNOWN", spacing=0.4):
-    x = x * inch
-    y = y * inch
+    def drawText(self, x, y, text=''):
+        self._canvas.drawString(x, self._y(y), text)
 
-    c.drawString(x, ty(y), label)
 
-    for i in range(10):
-        drawBox(c, x + (2 + i * spacing) * inch, y, label='%d' % i)
+    def drawBoolean(self, x, y, label="UNKNOWN", spacing=0.4):
+        x = x * inch
+        y = y * inch
 
-fontSize = 0.15 * inch
+        yes_x = x + 2*inch
+        yes_y = y
 
-canvas = canvas.Canvas('form.pdf', pagesize=letter)
-canvas.setFontSize(fontSize)
+        no_x = x + (2.0 + spacing) * inch
+        no_y = y
 
-drawBoolean(canvas, 1, 2, 'Broke Down')
-drawBoolean(canvas, 1, 2+0.2, 'Disqualified')
-drawInteger(canvas, 1, 2+0.4, 'Pyramid')
+        self.drawText(x, y, label)
+        self.drawBox(yes_x, yes_y, label='Y')
+        self.drawBox(no_x, no_y, label='N')
 
-canvas.save()
+
+    def drawInteger(self, x, y, label="UNKNOWN", spacing=0.4):
+        x = x * inch
+        y = y * inch
+
+        self.drawText(x, y, label)
+
+        for i in range(10):
+            self.drawBox(x + (2 + i * spacing) * inch, y, label='%d' % i)
+
+
+    def save(self):
+        self._canvas.save()
+
+
+scantron = Scantron('form.pdf')
+scantron.drawBoolean(1, 2, 'Broke Down')
+scantron.drawBoolean(1, 2+0.2, 'Disqualified')
+scantron.drawInteger(1, 2+0.4, 'Pyramid')
+scantron.save()
