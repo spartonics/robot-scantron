@@ -66,6 +66,21 @@ class Scantron:
         self._y += inches * inch
 
 
+    def populate(self, data):
+        self.drawText(1*inch, 1*inch, 'Scouting Sheet')
+        self.moveBy(0.5)
+        self.drawInteger(1, '1000')
+        self.drawInteger(1, '100')
+        self.drawInteger(1, '10')
+        self.drawInteger(1, '1')
+
+        for field in data:
+            if field.fieldType == int:
+                scantron.drawInteger(1, field.label)
+            elif field.fieldType == bool:
+                scantron.drawBoolean(1, field.label)
+
+
     def save(self):
         self._canvas.save()
 
@@ -76,35 +91,25 @@ class Field:
         self.label = label
         self.fieldType = fieldType
 
+
 data = [
-        Field('auton_high', 'Auton High', int),
-        Field('auton_mid', 'Auton Mid', int),
-        Field('auton_low', 'Auton Low', int),
-        Field('high', 'High', int),
-        Field('mid', 'Mid', int),
-        Field('low', 'Low', int),
-        Field('pyramid', 'Pyramid', int),
-        Field('missed', 'Missed', int),
-        Field('fouls', 'Fouls', int),
-        Field('tech_fouls', 'Tech fouls', int),
-        Field('defense', 'Defense', bool),
-        Field('pickup', 'Pickup', bool),
-        Field('noshow', 'Noshow', bool),
-        Field('brokedown', 'Brokedown', bool),
-        Field('dq', 'DQ', bool),
+    Field('auton_high', 'Auton High', int),
+    Field('auton_mid', 'Auton Mid', int),
+    Field('auton_low', 'Auton Low', int),
+    Field('high', 'High', int),
+    Field('mid', 'Mid', int),
+    Field('low', 'Low', int),
+    Field('pyramid', 'Pyramid', int),
+    Field('missed', 'Missed', int),
+    Field('fouls', 'Fouls', int),
+    Field('tech_fouls', 'Tech fouls', int),
+    Field('defense', 'Defense', bool),
+    Field('pickup', 'Pickup', bool),
+    Field('noshow', 'Noshow', bool),
+    Field('brokedown', 'Brokedown', bool),
+    Field('dq', 'DQ', bool),
 ]
 
-
 scantron = Scantron('form.pdf', spacing=0.5)
-scantron.drawText(1*inch, 1*inch, 'Scouting Sheet')
-scantron.moveBy(0.5)
-scantron.drawInteger(1, '1000')
-scantron.drawInteger(1, '100')
-scantron.drawInteger(1, '10')
-scantron.drawInteger(1, '1')
-for field in data:
-    if field.fieldType == int:
-        scantron.drawInteger(1, field.label)
-    elif field.fieldType == bool:
-        scantron.drawBoolean(1, field.label)
+scantron.populate(data)
 scantron.save()
