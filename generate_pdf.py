@@ -26,7 +26,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-# If the file has a .py extension, we still should accept it
+# If the file has a .py extension, we should still accept it
 if args.data.endswith('.py'):
     args.data = os.path.splitext(args.data)[0]
 
