@@ -111,15 +111,26 @@ class Scantron:
         self.draw_qr(6.5*inch, 1.1*inch, '%d:%d' % (match, position))
 
         # Draw a sheet title
+        position_str = [
+            'Red 1',
+            'Red 2',
+            'Red 3',
+            'Blue 1',
+            'Blue 2',
+            'Blue 3',
+        ][position - 1]
         self.draw_text(2*inch, 1.2*inch, 'Spartonics 1503', size=0.3*inch)
         self.draw_text(2*inch, 1.6*inch, 'Scouting Sheet', size=0.3*inch)
-        self.adjust_y(1.0*inch)
+        self.draw_text(1*inch, 2.0*inch, 'Team ___________')
+        self.draw_text(3*inch, 2.0*inch, 'Match %d %s' % (match, position_str))
+        self.adjust_y(1.5*inch)
 
         # Create the bubbles for the team number
         self.draw_integer('1000')
         self.draw_integer('100')
         self.draw_integer('10')
         self.draw_integer('1')
+        self.adjust_y(0.2*inch)
 
         # Create the remainder of the sheet
         for field in data:
