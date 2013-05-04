@@ -12,9 +12,12 @@ class Scantron:
 
         self._canvas = canvas.Canvas(filename, pagesize=letter)
         self._canvas.setFontSize(self._fontSize)
-
-        self._y = 1 * inch
+        self._reset_values()
         self._spacing = spacing
+
+
+    def _reset_values(self):
+        self._y = 1 * inch
         self._bsize = 0.2*inch
         self._bspacing = 0.3*inch
 
@@ -98,14 +101,14 @@ class Scantron:
         self._bspacing = box_spacing
 
 
-    def populate(self, data):
+    def add_sheet(self, data, match=1, position=1):
         # Draw boxes for determining boundaries
         self.draw_box(1*inch, 1.2*inch, size=0.4*inch, filled=True)
         self.draw_box((7.5-0.4)*inch, (10.2-0.4)*inch, size=0.4*inch, 
                 filled=True)
 
         # Draw the QR code containing match and position
-        self.draw_qr(6.5*inch, 1*inch, '1:1')
+        self.draw_qr(6.5*inch, 1.1*inch, '%d:%d' % (match, position))
 
         # Draw a sheet title
         self.draw_text(2*inch, 1.2*inch, 'Spartonics 1503', size=0.3*inch)
@@ -124,6 +127,14 @@ class Scantron:
                 self.draw_integer(field.label)
             elif field.fieldType == bool:
                 self.draw_boolean(field.label)
+
+
+    def populate(self, data, matches=1):
+        for match in range(1, matches + 1):
+            for position in range(1, 7):
+                self.add_sheet(data, match, position)
+                self._canvas.showPage()
+                self._reset_values()
 
 
     def save(self):
