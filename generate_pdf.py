@@ -20,6 +20,7 @@ data = [
     Field('dq', 'DQ', bool),
 ]
 
-st = Scantron('form.pdf', spacing=0.5)
+st = Scantron('form.pdf', spacing=0.3*inch)
+st.set_box_sizes(box_size=0.2*inch, box_spacing=0.3*inch)
 st.populate(data)
 st.save()
