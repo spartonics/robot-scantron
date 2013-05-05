@@ -140,12 +140,19 @@ class Scantron:
                 self.draw_boolean(field.label)
 
 
-    def populate(self, data, matches=1):
-        for match in range(1, matches + 1):
+    def populate(self, data, matches=1, collate='on'):
+        if collate == 'on':
+            for match in range(1, matches + 1):
+                for position in range(1, 7):
+                    self.add_sheet(data, match, position)
+                    self._canvas.showPage()
+                    self._reset_values()
+        else:
             for position in range(1, 7):
-                self.add_sheet(data, match, position)
-                self._canvas.showPage()
-                self._reset_values()
+                for match in range(1, matches + 1):
+                    self.add_sheet(data, match, position)
+                    self._canvas.showPage()
+                    self._reset_values()
 
 
     def save(self):
