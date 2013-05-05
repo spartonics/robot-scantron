@@ -23,6 +23,11 @@ parser.add_argument(
         help='File where the field data is stored. ' +
                 'This must be a python script with an array called "data" ' +
                 'of Field entries.')
+parser.add_argument(
+        '--collate',
+        choices=['on', 'off'],
+        default='on',
+        help='Turns collatating on or off. Default is on.')
 
 args = parser.parse_args()
 
@@ -44,5 +49,5 @@ except AttributeError:
 # If everything went well, proceed to generate the PDF
 st = Scantron(args.output, spacing=0.3*inch)
 st.set_box_sizes(box_size=0.2*inch, box_spacing=0.3*inch)
-st.populate(data, matches=args.num_matches)
+st.populate(data, matches=args.num_matches, collate=args.collate)
 st.save()
