@@ -6,6 +6,15 @@ from reportlab.pdfgen import canvas
 from qrcode import *
 
 
+class ScantronParser:
+    def __init__(self):
+        pass
+
+
+    def scan(self, data, path):
+        pass
+
+
 class Scantron:
     def __init__(self, filename, spacing=0.3*inch):
         self._fontSize = 0.15*inch
