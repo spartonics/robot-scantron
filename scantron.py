@@ -5,6 +5,11 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from qrcode import *
 
+import numpy as np
+import scipy as sp
+from scipy import ndimage
+from PIL import Image, ImageDraw
+
 
 class ScantronParser:
     def __init__(self):
@@ -12,7 +17,45 @@ class ScantronParser:
 
 
     def scan(self, data, path):
-        pass
+        img = Image.open(path).convert('RGB')
+        im = sp.misc.fromimage(img, flatten=True)
+        im = np.where(im > 128, 0, 1)
+        label_im, num = ndimage.label(im, structure=np.ones((3, 3)).tolist())
+        centroids = ndimage.measurements.center_of_mass(im, label_im, xrange(1, 
+                num+1))
+        slices = ndimage.find_objects(label_im)
+
+        for i in range(len(slices)):
+            sub_img = np.where(label_im[slices[i]] == i + 1, 1, 0)
+            num_ones = np.sum(sub_img)
+            num_all = sub_img.size
+            shape = sub_img.shape
+
+            ratio = float(shape[0]) / float(shape[1])
+            brightness = float(num_ones)/float(num_all)
+
+            if brightness > 0.95 and abs(ratio - 1.0) < 0.1 and shape[0] > 14:
+                print('s: ' + str(slices[i]))
+                x1, x2 = slices[i][1].start, slices[i][1].stop
+                y1, y2 = slices[i][0].start, slices[i][0].stop
+
+                draw = ImageDraw.Draw(img)
+                draw.rectangle([x1, y1, x2, y2], outline='blue')
+                del draw
+
+        for centroid in centroids:
+            x = int(centroid[1])
+            y = int(centroid[0])
+
+            red = (255, 0, 0)
+
+            img.putpixel([x-1, y], red)
+            img.putpixel([x+1, y], red)
+            img.putpixel([x, y], red)
+            img.putpixel([x, y-1], red)
+            img.putpixel([x, y+1], red)
+
+        img.show()
 
 
 class Scantron:
