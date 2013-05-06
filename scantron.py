@@ -36,6 +36,7 @@ class ScantronParser:
 
             if brightness > 0.95 and abs(ratio - 1.0) < 0.1 and shape[0] > 14:
                 print('s: ' + str(slices[i]))
+                print('c: ' + str(centroids[i]))
                 x1, x2 = slices[i][1].start, slices[i][1].stop
                 y1, y2 = slices[i][0].start, slices[i][0].stop
 
@@ -156,6 +157,7 @@ class Scantron:
     def add_sheet(self, data, match=1, position=1):
         # Draw boxes for determining boundaries
         self.draw_box(1*inch, 1.2*inch, size=0.4*inch, filled=True)
+        self.draw_box(1*inch, (10.2-0.4)*inch, size=0.4*inch, filled=True)
         self.draw_box((7.5-0.4)*inch, (10.2-0.4)*inch, size=0.4*inch, 
                 filled=True)
 
