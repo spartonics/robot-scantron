@@ -9,6 +9,7 @@ import numpy as np
 import scipy as sp
 from scipy import ndimage
 from PIL import Image, ImageDraw
+import math
 
 
 class ScantronParser:
@@ -25,6 +26,8 @@ class ScantronParser:
                 num+1))
         slices = ndimage.find_objects(label_im)
 
+        squares = []
+
         for i in range(len(slices)):
             sub_img = np.where(label_im[slices[i]] == i + 1, 1, 0)
             num_ones = np.sum(sub_img)
@@ -35,8 +38,6 @@ class ScantronParser:
             brightness = float(num_ones)/float(num_all)
 
             if brightness > 0.95 and abs(ratio - 1.0) < 0.1 and shape[0] > 14:
-                print('s: ' + str(slices[i]))
-                print('c: ' + str(centroids[i]))
                 x1, x2 = slices[i][1].start, slices[i][1].stop
                 y1, y2 = slices[i][0].start, slices[i][0].stop
 
@@ -44,19 +45,26 @@ class ScantronParser:
                 draw.rectangle([x1, y1, x2, y2], outline='blue')
                 del draw
 
-        for centroid in centroids:
-            x = int(centroid[1])
-            y = int(centroid[0])
+                squares.append(i)
 
-            red = (255, 0, 0)
+        if len(squares) != 3:
+            print('Could not uniquely identify the three page markers.')
+            raise Exception
 
-            img.putpixel([x-1, y], red)
-            img.putpixel([x+1, y], red)
-            img.putpixel([x, y], red)
-            img.putpixel([x, y-1], red)
-            img.putpixel([x, y+1], red)
+        squares = zip(squares, map(lambda s: sum(centroids[s]), squares))
+        squares = sorted(squares, key=lambda x: x[1])
 
-        img.show()
+        for s in squares:
+            print('square ' + str(s))
+
+        tl = centroids[squares[0][0]]
+        bl = centroids[squares[1][0]]
+        br = centroids[squares[2][0]]
+
+        rotation = math.atan2(bl[1] - tl[1], bl[0] - tl[0])
+        print('rotation: ' + str(rotation))
+
+        #img.show()
 
 
 class Scantron:
