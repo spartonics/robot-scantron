@@ -35,9 +35,9 @@ class ScantronParser:
             shape = sub_img.shape
 
             ratio = float(shape[0]) / float(shape[1])
-            brightness = float(num_ones)/float(num_all)
+            darkness = float(num_ones)/float(num_all)
 
-            if brightness > 0.95 and abs(ratio - 1.0) < 0.1 and shape[0] > 14:
+            if darkness > 0.95 and abs(ratio - 1.0) < 0.1 and shape[0] > 14:
                 x1, x2 = slices[i][1].start, slices[i][1].stop
                 y1, y2 = slices[i][0].start, slices[i][0].stop
 
@@ -63,8 +63,6 @@ class ScantronParser:
 
         rotation = math.atan2(bl[1] - tl[1], bl[0] - tl[0])
         print('rotation: ' + str(rotation))
-
-        #img.show()
 
 
 class Scantron:
