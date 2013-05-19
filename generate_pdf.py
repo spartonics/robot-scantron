@@ -3,7 +3,7 @@
 import os
 import sys
 from argparse import ArgumentParser
-from scantron import *
+from scantron import ScantronGenerator, inch
 
 # Make this file easier to use by adding nice arguments
 parser = ArgumentParser(description='Generate scantron PDFs.')
@@ -47,7 +47,7 @@ except AttributeError:
     quit(1)
 
 # If everything went well, proceed to generate the PDF
-st = Scantron(args.output, spacing=0.3*inch)
+st = ScantronGenerator(args.output, spacing=0.3*inch)
 st.set_box_sizes(box_size=0.2*inch, box_spacing=0.3*inch)
 st.populate(data, matches=args.num_matches, collate=args.collate)
 st.save()
