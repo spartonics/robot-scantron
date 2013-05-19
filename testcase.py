@@ -3,7 +3,7 @@
 from scantron import ScantronGenerator, ScantronField, inch
 import PythonMagick
 from pyPdf import PdfFileReader
-from PIL import Image
+from PIL import Image, ImageOps
 
 test_data = [
     ScantronField('foo', 'Foo foo foo', int),
@@ -35,9 +35,16 @@ for page in range(num_pages):
     pages.append(name)
 
 # Create a series of transformations to apply
+def rotate(im, deg):
+    blank = Image.new('L', im.size, 255)
+    mask = blank.rotate(deg, expand=False)
+    mask = ImageOps.invert(mask)
+    rot = im.rotate(deg, expand=False)
+    return Image.composite(blank, rot, mask)
+
 transformations = [
-    lambda x: x.rotate(10, expand=False),
-    lambda x: x.rotate(-10, expand=False),
+    lambda x: rotate(x, 10),
+    lambda x: rotate(x, -10),
 ]
 
 tf = 0
