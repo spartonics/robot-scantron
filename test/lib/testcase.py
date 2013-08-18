@@ -13,10 +13,13 @@ test_data = [
 ]
 
 # Generate scantron PDF
-pdf = ScantronGenerator('test.pdf')
-pdf.set_box_sizes(box_size=0.2*inch, box_spacing=0.3*inch)
-pdf.populate(test_data, matches=1, collate='no')
-pdf.save()
+def GenerateScantron(name, data):
+    pdf = ScantronGenerator(name)
+    pdf.set_box_sizes(box_size=0.2*inch, box_spacing=0.3*inch)
+    pdf.populate(data, matches=1, collate='no')
+    pdf.save()
+
+GenerateScantron('test.pdf', test_data)
 
 # Convert PDF to a series of pictures
 pages = []
